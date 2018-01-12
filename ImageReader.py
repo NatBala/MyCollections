@@ -32,7 +32,7 @@ prjPath = r'C:\Users\Natarajan\Desktop\PDFParser'
 # print(textFromImage)
 
 # converting pdf to image using wand
-fileToParse = 'SampleRussian3.pdf'
+fileToParse = 'RussianSample.pdf'
 fileName = fileToParse.split('.')[0]
 with(wandImage(filename=os.path.join(prjPath, fileToParse),
                resolution=500)) as source:
@@ -46,10 +46,10 @@ with(wandImage(filename=os.path.join(prjPath, fileToParse),
 # importing the grayscal pic
 # using google translation
 translator = Translator()
-with open(os.path.join(prjPath, fileToParse.replace('pdf', 'txt')), 'w') as ParsedFile:
+with open(os.path.join(prjPath, fileToParse.replace('pdf', 'txt')), 'w', encoding='utf8') as ParsedFile:
     for ind in range(pages):
         imageFile = Image.open(os.path.join(prjPath, fileName + 'Page' + str(ind) + '.jpeg'))
-        parsedText = pyts.image_to_string(imageFile)
+        parsedText = pyts.image_to_string(imageFile, lang='eng+rus')
         parsedTextToken = parsedText.split()
         textLength = len(parsedTextToken)
         textLenInd = int(np.ceil(textLength) / 5)
@@ -67,15 +67,15 @@ with open(os.path.join(prjPath, fileToParse.replace('pdf', 'txt')), 'w') as Pars
             engLang = 'Yes'
         else:
             engLang = 'No'
-        if engLang == 'No':
-            print('Page No {} is Non English and using Google to Translate'.format(ind + 1))
-            translatedText = translator.translate(parsedText)
-            print('Detected Lang for Page No {} is {}'.format(ind + 1,
-                                                              googletrans.LANGUAGES[translatedText.src]))
-            ParsedFile.write('PAGE NO. {} \n'.format(ind + 1) + translatedText.text
-                             + '\n')
-        else:
-            ParsedFile.write('PAGE NO. {} \n'.format(ind + 1) + parsedText + '\n')
+        # if engLang == 'No':
+        print('Page No {} is Non English and using Google to Translate'.format(ind + 1))
+        translatedText = translator.translate(parsedText)
+        print('Detected Lang for Page No {} is {}'.format(ind + 1,
+                                                          googletrans.LANGUAGES[translatedText.src]))
+        ParsedFile.write('PAGE NO. {} \n'.format(ind + 1) + translatedText.text
+                         + '\n')
+        # else:
+        #    ParsedFile.write('PAGE NO. {} \n'.format(ind + 1) + parsedText + '\n')
 
 test = translator.translate("Лорем ипсум долор сит амет, фугит мнесарчум ут сеа, ет цум граеце тамяуам. Хас сумо сенсибус торяуатос цу, десеруиссе витуператорибус еа еос. Ид нец сенсибус ехплицари. Яуодси адмодум менандри яуи ех, сале лобортис еа меи. Еррем мелиус сусципиантур сеа ут, хабемус цонсететур диссентиас пер не.")
 print(test)
